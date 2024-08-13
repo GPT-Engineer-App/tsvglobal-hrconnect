@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SupabaseAuthProvider } from './integrations/supabase/auth';
 import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
-import Index from './pages/Index';
+import Dashboard from './pages/Dashboard';
 
 const queryClient = new QueryClient();
 
@@ -18,7 +18,7 @@ const App = () => (
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route element={<Layout />}>
-              <Route path="/" element={<Index />} />
+              <Route path="/" element={<Dashboard />} />
             </Route>
           </Routes>
         </BrowserRouter>
