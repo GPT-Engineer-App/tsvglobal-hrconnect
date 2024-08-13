@@ -17,8 +17,10 @@ const LoginPage = () => {
     e.preventDefault();
     setError(null);
     try {
-      const { isAdmin } = await login(email, password);
-      navigate(isAdmin ? '/admin' : '/user');
+      const { data, isAdmin } = await login(email, password);
+      if (data.user) {
+        navigate(isAdmin ? '/admin' : '/user');
+      }
     } catch (error) {
       setError(error.message);
     }

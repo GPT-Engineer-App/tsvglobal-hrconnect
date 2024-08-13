@@ -48,7 +48,7 @@ export const SupabaseAuthProviderInner = ({ children }) => {
     if (error) throw error;
     setSession(data.session);
     
-    // Check if the user is an admin using the metadata
+    // Check if the user is an admin using the user_metadata
     const isAdmin = data.user.user_metadata?.is_admin === true;
     return { data, isAdmin };
   };
