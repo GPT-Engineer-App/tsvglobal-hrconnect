@@ -22,9 +22,11 @@ export const SupabaseAuthProviderInner = ({ children }) => {
 
   const checkAdminStatus = async (userId) => {
     const { data: userData, error } = await supabase.auth.admin.getUserById(userId);
+    console.log('User data:', userData); // Log the entire user data for investigation
     if (!error && userData) {
-      setIsAdmin(userData.app_metadata?.is_admin === true);
-      return userData.app_metadata?.is_admin === true;
+      const isAdminUser = userData.user.app_metadata?.is_admin === true;
+      setIsAdmin(isAdminUser);
+      return isAdminUser;
     }
     return false;
   };

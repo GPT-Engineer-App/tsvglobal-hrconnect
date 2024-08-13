@@ -1,36 +1,24 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSupabaseAuth } from '../integrations/supabase/auth';
 
 const Dashboard = () => {
+  const { isAdmin } = useSupabaseAuth();
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold">
+        Welcome to the {isAdmin ? 'Admin' : 'User'} Dashboard
+      </h2>
       <Card>
         <CardHeader>
-          <CardTitle>Employee Overview</CardTitle>
+          <CardTitle>User Status</CardTitle>
         </CardHeader>
         <CardContent>
-          <p>Total Employees: 150</p>
-          <p>New Hires This Month: 5</p>
+          <p>You are logged in as a {isAdmin ? 'an admin' : 'a non-admin'} user.</p>
         </CardContent>
       </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Attendance Summary</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>Present Today: 142</p>
-          <p>On Leave: 8</p>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Upcoming Events</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>Team Building: July 15</p>
-          <p>Quarterly Review: August 1</p>
-        </CardContent>
-      </Card>
+      {/* Add more dashboard content here */}
     </div>
   );
 };
