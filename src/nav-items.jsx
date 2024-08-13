@@ -1,14 +1,3 @@
-import { Film } from "lucide-react";
-import Index from "./pages/Index.jsx";
-
-/**
- * Central place for defining the navigation items. Used for navigation components and routing.
- */
-export const navItems = [
-  {
-    title: "Movie Explorer",
-    to: "/",
-    icon: <Film className="h-4 w-4" />,
-    page: <Index />,
-  },
-];
+// This file is no longer needed for navigation, but we'll keep it empty for now
+// in case we want to add more complex navigation in the future.
+export const navItems = [];
