@@ -48,16 +48,8 @@ export const SupabaseAuthProviderInner = ({ children }) => {
     if (error) throw error;
     setSession(data.session);
     
-    // Fetch user metadata to determine if they're an admin
-    const { data: userData, error: userError } = await supabase
-      .from('auth.users')
-      .select('raw_app_meta_data')
-      .eq('id', data.user.id)
-      .single();
-    
-    if (userError) throw userError;
-    
-    const isAdmin = userData.raw_app_meta_data?.is_admin === true;
+    // Check if the user is an admin using the metadata
+    const isAdmin = data.user.user_metadata?.is_admin === true;
     return { data, isAdmin };
   };
 
