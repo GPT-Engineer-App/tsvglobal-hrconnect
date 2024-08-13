@@ -17,6 +17,7 @@ export const SupabaseAuthProvider = ({ children }) => {
 export const SupabaseAuthProviderInner = ({ children }) => {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -24,11 +25,25 @@ export const SupabaseAuthProviderInner = ({ children }) => {
       setLoading(true);
       const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
+      if (session) {
+        const { data: userData, error } = await supabase.auth.admin.getUserById(session.user.id);
+        if (!error && userData) {
+          setIsAdmin(userData.app_metadata?.is_admin === true);
+        }
+      }
       setLoading(false);
     };
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session);
+      if (session) {
+        const { data: userData, error } = await supabase.auth.admin.getUserById(session.user.id);
+        if (!error && userData) {
+          setIsAdmin(userData.app_metadata?.is_admin === true);
+        }
+      } else {
+        setIsAdmin(false);
+      }
       queryClient.invalidateQueries('user');
     });
 
@@ -36,7 +51,6 @@ export const SupabaseAuthProviderInner = ({ children }) => {
 
     return () => {
       authListener.subscription.unsubscribe();
-      setLoading(false);
     };
   }, [queryClient]);
 
@@ -48,20 +62,23 @@ export const SupabaseAuthProviderInner = ({ children }) => {
     if (error) throw error;
     setSession(data.session);
     
-    // Check if the user is an admin using the user_metadata
-    const isAdmin = data.user.user_metadata?.is_admin === true;
-    return { data, isAdmin };
+    const { data: userData, error: userError } = await supabase.auth.admin.getUserById(data.user.id);
+    if (!userError && userData) {
+      setIsAdmin(userData.app_metadata?.is_admin === true);
+    }
+    
+    return { data, isAdmin: userData?.app_metadata?.is_admin === true };
   };
 
   const logout = async () => {
     await supabase.auth.signOut();
     setSession(null);
+    setIsAdmin(false);
     queryClient.invalidateQueries('user');
-    setLoading(false);
   };
 
   return (
-    <SupabaseAuthContext.Provider value={{ session, loading, login, logout }}>
+    <SupabaseAuthContext.Provider value={{ session, loading, isAdmin, login, logout }}>
       {children}
     </SupabaseAuthContext.Provider>
   );
