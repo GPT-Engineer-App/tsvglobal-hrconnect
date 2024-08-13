@@ -29,8 +29,14 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Welcome to HRMS</CardTitle>
+        <CardHeader className="space-y-1">
+          <div className="flex justify-center mb-4">
+            {/* Placeholder for logo */}
+            <div className="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center text-gray-600">
+              Logo
+            </div>
+          </div>
+          <CardTitle className="text-2xl font-bold text-center">TSVGlobal HR Connect</CardTitle>
           <CardDescription className="text-center">Sign in to your account</CardDescription>
         </CardHeader>
         <CardContent>
