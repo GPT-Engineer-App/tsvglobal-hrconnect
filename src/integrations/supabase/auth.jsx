@@ -1,33 +1,26 @@
 import { useState, useEffect, createContext, useContext } from 'react';
-import { supabase, SupabaseProvider } from './index.js';
+import { supabase } from './index.js';
 import { useQueryClient } from '@tanstack/react-query';
 
 const SupabaseAuthContext = createContext();
 
 export const SupabaseAuthProvider = ({ children }) => {
-  return (
-    <SupabaseProvider>
-      <SupabaseAuthProviderInner>
-        {children}
-      </SupabaseAuthProviderInner>
-    </SupabaseProvider>
-  );
-}
-
-export const SupabaseAuthProviderInner = ({ children }) => {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const queryClient = useQueryClient();
 
   const checkAdminStatus = async (userId) => {
-    const { data: userData, error } = await supabase.auth.admin.getUserById(userId);
-    if (!error && userData) {
+    try {
+      const { data: userData, error } = await supabase.auth.admin.getUserById(userId);
+      if (error) throw error;
       const isAdminUser = userData.user.app_metadata?.is_admin === true;
       setIsAdmin(isAdminUser);
       return isAdminUser;
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      return false;
     }
-    return false;
   };
 
   useEffect(() => {
