@@ -5,13 +5,11 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SupabaseAuthProvider, useSupabaseAuth } from './integrations/supabase/auth';
 import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
-import AdminDashboard from './pages/AdminDashboard';
-import UserDashboard from './pages/UserDashboard';
 
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }) => {
-  const { session, loading, isAdmin } = useSupabaseAuth();
+  const { session, loading } = useSupabaseAuth();
 
   if (loading) {
     return <div>Loading...</div>;
@@ -22,6 +20,20 @@ const ProtectedRoute = ({ children }) => {
   }
 
   return children;
+};
+
+const Dashboard = () => {
+  const { isAdmin } = useSupabaseAuth();
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">
+        {isAdmin ? "Admin Dashboard" : "User Dashboard"}
+      </h1>
+      <p>
+        You are logged in as a {isAdmin ? "an admin" : "a non-admin"} user.
+      </p>
+    </div>
+  );
 };
 
 const App = () => (
@@ -37,9 +49,7 @@ const App = () => (
                 path="/"
                 element={
                   <ProtectedRoute>
-                    {({ isAdmin }) => (
-                      isAdmin ? <AdminDashboard /> : <UserDashboard />
-                    )}
+                    <Dashboard />
                   </ProtectedRoute>
                 }
               />

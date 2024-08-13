@@ -20,16 +20,22 @@ export const SupabaseAuthProviderInner = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const queryClient = useQueryClient();
 
+  const checkAdminStatus = async (userId) => {
+    const { data: userData, error } = await supabase.auth.admin.getUserById(userId);
+    if (!error && userData) {
+      setIsAdmin(userData.app_metadata?.is_admin === true);
+      return userData.app_metadata?.is_admin === true;
+    }
+    return false;
+  };
+
   useEffect(() => {
     const getSession = async () => {
       setLoading(true);
       const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
       if (session) {
-        const { data: userData, error } = await supabase.auth.admin.getUserById(session.user.id);
-        if (!error && userData) {
-          setIsAdmin(userData.app_metadata?.is_admin === true);
-        }
+        await checkAdminStatus(session.user.id);
       }
       setLoading(false);
     };
@@ -37,10 +43,7 @@ export const SupabaseAuthProviderInner = ({ children }) => {
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session);
       if (session) {
-        const { data: userData, error } = await supabase.auth.admin.getUserById(session.user.id);
-        if (!error && userData) {
-          setIsAdmin(userData.app_metadata?.is_admin === true);
-        }
+        await checkAdminStatus(session.user.id);
       } else {
         setIsAdmin(false);
       }
@@ -62,12 +65,9 @@ export const SupabaseAuthProviderInner = ({ children }) => {
     if (error) throw error;
     setSession(data.session);
     
-    const { data: userData, error: userError } = await supabase.auth.admin.getUserById(data.user.id);
-    if (!userError && userData) {
-      setIsAdmin(userData.app_metadata?.is_admin === true);
-    }
+    const isAdminUser = await checkAdminStatus(data.user.id);
     
-    return { data, isAdmin: userData?.app_metadata?.is_admin === true };
+    return { data, isAdmin: isAdminUser };
   };
 
   const logout = async () => {
