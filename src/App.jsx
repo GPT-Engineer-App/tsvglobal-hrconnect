@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SupabaseAuthProvider, useSupabaseAuth } from './integrations/supabase/auth';
 import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
-import AdminDashboard from './pages/AdminDashboard';
+import NewAdminDashboard from './pages/NewAdminDashboard';
 import UserDashboard from './pages/UserDashboard';
 
 const queryClient = new QueryClient();
@@ -45,7 +45,7 @@ const App = () => (
                 path="/admin"
                 element={
                   <ProtectedRoute>
-                    <AdminDashboard />
+                    <NewAdminDashboard />
                   </ProtectedRoute>
                 }
               />
