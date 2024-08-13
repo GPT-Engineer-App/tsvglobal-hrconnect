@@ -4,12 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from '../integrations/supabase';
+import { LogOut } from 'lucide-react';
+import { useSupabaseAuth } from '../integrations/supabase/auth';
+import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({ email: '', password: '', isAdmin: false });
   const [updateUser, setUpdateUser] = useState({ id: '', email: '' });
   const [message, setMessage] = useState('');
+  const { logout } = useSupabaseAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchUsers();
@@ -77,9 +82,19 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
+
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+        <Button onClick={handleLogout} variant="ghost" size="icon">
+          <LogOut className="h-4 w-4" />
+        </Button>
+      </div>
       
       <Card>
         <CardHeader>
